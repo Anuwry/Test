@@ -58,6 +58,8 @@ class School:
         print("ไม่พบรหัสวิชา")
 
 if __name__ == "__main__":
+
+    
     school = School("Code Academy")
     c1 = Course("CS101", "Python Basics", 2)
     c2 = Workshop("WS200", "Robot Building", 5)
