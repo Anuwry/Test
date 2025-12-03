@@ -59,32 +59,18 @@ class School:
 
 if __name__ == "__main__":
     school = School("Code Academy")
-
-    # สร้างคอร์ส (สังเกต max_seats)
-    c1 = Course("CS101", "Python Basics", 2)      # รับแค่ 2 คน
-    c2 = Workshop("WS200", "Robot Building", 5)   # รับ 5 คน
-    c3 = Seminar("SEM99", "Tech Trends 2025", 50) # รับ 50 คน
-
+    c1 = Course("CS101", "Python Basics", 2)
+    c2 = Workshop("WS200", "Robot Building", 5)
+    c3 = Seminar("SEM99", "Tech Trends 2025", 50)
     school.add_course(c1)
     school.add_course(c2)
     school.add_course(c3)
-
     school.show_courses()
-
-    # 1. ลงทะเบียนปกติ
-    school.register_student("Somchai", "CS101") # เสีย 1500
-    school.register_student("Alice", "WS200")   # เสีย 2500
-    school.register_student("Bob", "SEM99")     # ฟรี
-
-    # 2. ลงทะเบียนซ้ำ (ต้อง Error)
+    school.register_student("Somchai", "CS101")
+    school.register_student("Alice", "WS200")  
+    school.register_student("Bob", "SEM99")   
     school.register_student("Somchai", "CS101") 
-
-    # 3. ลงทะเบียนตอนคอร์สเต็ม (ต้อง Error)
-    school.register_student("Ken", "CS101") # เข้าเป็นคนที่ 2 (ได้)
-    school.register_student("Ryu", "CS101") # เข้าเป็นคนที่ 3 (เต็ม!)
-
-    # 4. ลงทะเบียนวิชาทิพย์ (ต้อง Error)
+    school.register_student("Ken", "CS101")
+    school.register_student("Ryu", "CS101")
     school.register_student("Somchai", "MUA999")
-
-    # ดูยอดคงเหลือ
     school.show_courses()
