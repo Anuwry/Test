@@ -1,104 +1,90 @@
-class Product:
-    def __init__(self, name, price, stock):
+class Course:
+    def __init__(self, code, name, max_seats):
+        self.code = code
         self.name = name
-        self.price = price
-        self.stock = stock
-
-    def reduce_stock(self):
-        if self.stock >= 1:
-            self.stock -= 1
-        else:
-            print("Out of stock")
+        self.max_seats = max_seats
+        self.students = []
     
-    def has_stock(self):
-        if self.stock >= 1: return True
-        return False
+    def get_price(self):
+        return 1500
     
-    def get_details(self):
-        return f"{self.name} ({self.price} บาท) - เหลือ {self.stock} ชิ้น"
-
-class Drink(Product):
-    def __init__(self, name, price, stock, volume):
-        super().__init__(name, price, stock)
-        self.volume = volume
-    
-    def get_details(self):
-        return f"{super().get_details()} [{self.volume}] mL"
-
-class Snack(Product):
-    def __init__(self, name, price, stock, weight):
-        super().__init__(name, price, stock)
-        self.weight = weight
-    
-    def get_details(self):
-        return f"{super().get_details()} [{self.weight}] g"
-
-class VendingMachine:
-    def __init__(self):
-        self.products = []
-        self.balance = 0
-    
-    def add_product(self, product):
-        self.products.append(product)
-    
-    def insert_money(self, amount):
-        self.balance += amount
-        print(f"ยอดเงิน {self.balance}")
-    
-    def show_menu(self):
-        for i,b in enumerate(self.products):
-            print(f"{i+1}. {b.get_details()}")
-    
-    def select_product(self, product_name):
-        found = None
-        for b in self.products:
-            if b.name == product_name:
-                found = b
-                break
-        if found == None:
-            print(f"ไม่พบสินค้า")
-            return
+    def enroll(self, student_name):
+        if len(self.students) == self.max_seats:
+            print("คอร์สเต็มแล้ว")
+            return False
+        if student_name in self.students:
+            print("คุณลงทะเบียนวิชานี้ไปแล้ว")
+            return False
         
-        if not found.has_stock():
-            print(f"สินค้าหมดแล้ว")
-            return
-        
-        if self.balance < found.price:
-            need = found.price - self.balance
-            print(f"เงินไม่พอ")
-            return
-        
-        self.balance -= found.price
-        found.reduce_stock()
-        print(f"รับสินค้า [{found.name}] เรียบร้อย")
-        print(f"เงินคงเหลืออยู่ {self.balance} บาท")
+        self.students.append(student_name)
+        print("ลงทะเบียนสำเร็จ")
+        return True
     
-    def return_change(self):
-        if self.balance > 0: 
-            print(f"ได้รับเงินทอนทั้งสิ้น {self.balance}")
-        self.balance = 0
+    def get_status(self):
+        return f"{self.name} ({len(self.students)}/{self.max_seats} seats)"
+    
+class Workshop(Course):
+    def get_price(self):
+        return 2500
+    
+class Seminar(Course):
+    def get_price(self):
+        return 0
+
+class School:
+    def __init__(self, name):
+        self.name = name
+        self.courses = []
+
+    def add_course(self, course):
+        self.courses.append(course)
+    
+    def show_courses(self):
+        print(f"\n--- 📚 คอร์สที่เปิดสอน: {self.name} ---")
+        for c in self.courses:
+            print(f"- [{c.code}] {c.get_status()} | ราคา: {c.get_price()} บาท")
+        print("-" * 30)
+    
+    def register_student(self, student_name, course_code):
+        print(f"🔄 นักเรียน {student_name} กำลังขอลงทะเบียนวิชา {course_code}...")
+        for b in self.courses:
+            if b.code == course_code:
+                success = b.enroll(student_name)
+                if success:
+                    price = b.get_price()
+                    print(f"ยอดที่ต้องชำระ {price} บาท")
+                return
+            
+        print("ไม่พบรหัสวิชา")
 
 if __name__ == "__main__":
-    machine = VendingMachine()
-    coke = Drink("Coke", 20, 5, 325)
-    lays = Snack("Lays", 30, 2, 50)
-    machine.add_product(coke)
-    machine.add_product(lays)
-    machine.show_menu()
+    school = School("Code Academy")
 
-    print("\n--- Test 1: เงินไม่พอ ---")
-    machine.insert_money(10)
-    machine.select_product("Coke")
+    # สร้างคอร์ส (สังเกต max_seats)
+    c1 = Course("CS101", "Python Basics", 2)      # รับแค่ 2 คน
+    c2 = Workshop("WS200", "Robot Building", 5)   # รับ 5 คน
+    c3 = Seminar("SEM99", "Tech Trends 2025", 50) # รับ 50 คน
 
-    print("\n--- Test 2: ซื้อสำเร็จ ---")
-    machine.insert_money(20)
-    machine.select_product("Coke")
-    
-    print("\n--- Test 3: เหมา Lays จนหมด ---")
-    machine.insert_money(100)
-    machine.select_product("Lays")
-    machine.select_product("Lays")
-    machine.select_product("Lays")
+    school.add_course(c1)
+    school.add_course(c2)
+    school.add_course(c3)
 
-    print("\n--- Test 4: คืนเงิน ---")
-    machine.return_change()
+    school.show_courses()
+
+    # 1. ลงทะเบียนปกติ
+    school.register_student("Somchai", "CS101") # เสีย 1500
+    school.register_student("Alice", "WS200")   # เสีย 2500
+    school.register_student("Bob", "SEM99")     # ฟรี
+
+    # 2. ลงทะเบียนซ้ำ (ต้อง Error)
+    school.register_student("Somchai", "CS101") 
+
+    # 3. ลงทะเบียนตอนคอร์สเต็ม (ต้อง Error)
+    school.register_student("Ken", "CS101") # เข้าเป็นคนที่ 2 (ได้)
+    school.register_student("Ryu", "CS101") # เข้าเป็นคนที่ 3 (เต็ม!)
+
+    # 4. ลงทะเบียนวิชาทิพย์ (ต้อง Error)
+    school.register_student("Somchai", "MUA999")
+
+    # ดูยอดคงเหลือ
+    school.show_courses()
